@@ -11,8 +11,10 @@ import os
 from urllib.parse import quote
 
 alarm_dict = {}
-HELP_MSG = """/알람 : 등록된 검색어를 삭제합니다.
-/알람 (키워드) : 최근검색어를 등록합니다."""
+HELP_MSG = """* /알람 (키워드1) (키워드2) ...
+키워드1, 키워드2 (OR 조건) 등을 알람 메세지를 받을 수 있도록 등록합니다. 
+* /알람
+등록된 키워드를 삭제합니다."""
 ALARM_TMPL = '''%s 검색어 확인
 https://search.naver.com/search.naver?where=nexearch&query=%s&ie=utf8&'''
 
