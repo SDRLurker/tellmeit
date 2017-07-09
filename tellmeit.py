@@ -99,17 +99,15 @@ def save_alarm():
 
 def load_alarm():
     get_update.last_up = 0
+    global alarm_dict
     if os.path.exists("alarm.pic"):
         f = open("alarm.pic", "rb")
         get_update.last_up, alarm_dict = pickle.load(f)
         logger.info("load %d %s" % (get_update.last_up, alarm_dict) )
         f.close()
-        return get_update.last_up, alarm_dict
+    return get_update.last_up, alarm_dict
 
 if __name__ == "__main__":
-    #pwd = os.getcwd()
-    #if not os.path.exists('%s/log' % pwd):
-    #    os.makedirs('%s/log' % pwd)
     bot = telegram.Bot(token = my_token)    # bot을 선언합니다.
     get_update.last_up, alarm_dict = load_alarm()
     check_alarm.min = 0
