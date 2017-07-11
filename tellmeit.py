@@ -12,7 +12,7 @@ from urllib.parse import quote
 
 alarm_dict = {}
 HELP_MSG = """* /알람 (키워드1) (키워드2) ...
-키워드1, 키워드2 (OR 조건) 등을 알람 메세지를 받을 수 있도록 등록합니다. 
+키워드1, 키워드2 (OR 조건) 등을 알람 메세지를 받을 수 있도록 등록합니다.
 * /알람
 등록된 키워드를 삭제합니다."""
 ALARM_TMPL = '''%s 검색어 확인
@@ -88,7 +88,7 @@ def check_alarm(bot):
     now = datetime.datetime.now()
     min = int(now.strftime("%M"))
     logger.debug("check_alarm %d %d %s" % (check_alarm.min, min, alarm_dict) )
-    if check_alarm.min < min:
+    if check_alarm.min != min:
         logger.debug("alarm_dict %s" % (alarm_dict,) )
         check_alarm.min = min
         send_alarm(bot)
