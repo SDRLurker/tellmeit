@@ -2,13 +2,15 @@
 #-*- coding: utf-8 -*-
 import telegram # 텔레그램 모듈을 가져옵니다.
 import naver
-from config import my_token
+from config import my_token, admin_id
 
 import time
 import datetime
 import pickle
 import os
 from urllib.parse import quote
+import sys
+import psutil
 
 alarm_dict = {}
 HELP_MSG = """* /알람 (키워드1) (키워드2) ...
@@ -74,14 +76,31 @@ def get_update(bot):
     except Exception as e:
         logger.error(e)
 
+# https://stackoverflow.com/questions/11329917/restart-python-script-from-within-itself
+def restart_program():
+    try:
+        p = psutil.Process(os.getpid())
+        for handler in p.get_open_files() + p.connections():
+            os.close(handler.fd)
+    except Exception as e:
+        logger.error('restart_program : ' + e)
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
+
 def send_alarm(bot):
-    data = naver.get_crawl_data()
+    try:
+        data = naver.get_crawl_data()
+    except Exception as e:
+        logger.error('send_alarm' + e)
+        bot.send_message(admin_id, '네이버 크롤링 오류. 내용=%s' % e)
+        return False
     for chat_id in alarm_dict:
         keywords = alarm_dict[chat_id].split()
         for keyword in keywords:
             logger.debug("send_alarm %s %s %s" % (chat_id, keyword, naver.search_word(data, keyword)) )
             if naver.search_word(data, keyword) >= 0:
                 bot.send_message( chat_id=chat_id, text= ALARM_TMPL % (keyword, quote(keyword)) )
+    return True
 
 def check_alarm(bot):
     get_update(bot)
@@ -89,9 +108,12 @@ def check_alarm(bot):
     min = int(now.strftime("%M"))
     logger.debug("check_alarm %d %d %s" % (check_alarm.min, min, alarm_dict) )
     if check_alarm.min != min:
+        logger.info("check_alarm.min %d, min %d" % (check_alarm.min, min) )
         logger.debug("alarm_dict %s" % (alarm_dict,) )
         check_alarm.min = min
-        send_alarm(bot)
+        is_success = send_alarm(bot)
+        if not is_success:
+            restart_program()
     time.sleep(2)
 
 def save_alarm():
