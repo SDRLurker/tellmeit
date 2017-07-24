@@ -13,12 +13,17 @@ import sys
 import psutil
 
 alarm_dict = {}
+ping_dict = {}
+
 HELP_MSG = """* /알람 (키워드1) (키워드2) ...
 키워드1, 키워드2 (OR 조건) 등을 알람 메세지를 받을 수 있도록 등록합니다.
 * /알람
 등록된 키워드를 삭제합니다."""
 ALARM_TMPL = '''%s 검색어 확인
 https://search.naver.com/search.naver?where=nexearch&query=%s&ie=utf8&'''
+PING_REG = "핑이 등록되었습니다."
+PING_DEL = "핑이 해제되었습니다."
+PING_MSG = "정각입니다. tellmeit_bot이 살아있음을 알립니다."
 
 import logging
 import logging.handlers
@@ -37,15 +42,21 @@ fileHandler.setFormatter(formatter)
 # Handler를 logging에 추가
 logger.addHandler(fileHandler)
 
+def is_valid_cmd(words, kcmd, cmd):
+    is_cmd = len(words) >=1 and (words[0][1:] == kcmd or words[0][1:] == cmd)
+    if is_cmd and words[0][0] == '/':
+        return True
+    return False
+
 def parse_cmd(text):
     words = text.split()
     if len(words) >= 2 and (words[0] == "/알람" or words[0] == '/alarm'):
         return {'alarm':' '.join(words[1:])}
-    elif len(words) >= 1 and (words[0] == "/알람" or words[0] == '/alarm'):
+    elif is_valid_cmd(words, "알람", "alarm"):
         return {'alarm':''}
-
-    is_help = len(words) >= 1 and (words[0].find("도움")>=0 or words[0].find("help")>=0)
-    if is_help and words[0][0]=='/':
+    if is_valid_cmd(words, "핑", "ping"):
+        return {'ping':''}
+    if is_valid_cmd(words, "도움", "help"):
         return {'help':HELP_MSG}
     return ""
 
@@ -71,6 +82,15 @@ def get_update(bot):
                 save_alarm()
             elif 'help' in cmd_dict:
                 bot.send_message(chat_id=chat_id, text=cmd_dict['help'])
+            elif 'ping' in cmd_dict:
+                if chat_id in ping_dict:
+                    ping_dict.pop(chat_id, '')
+                    bot.send_message(chat_id, PING_DEL)
+                else:
+                    ping_dict[chat_id] = chat_id
+                    bot.send_message(chat_id, PING_REG)
+                save_alarm()
+
             # https://github.com/python-telegram-bot/python-telegram-bot/issues/26
             get_update.last_up = u.update_id + 1
     except Exception as e:
@@ -86,6 +106,10 @@ def restart_program():
         logger.error('restart_program : ' + e)
     python = sys.executable
     os.execl(python, python, *sys.argv)
+
+def send_ping(bot):
+    for chat_id in ping_dict:
+        bot.send_message( chat_id=chat_id, text=PING_MSG )
 
 def send_alarm(bot):
     try:
@@ -110,6 +134,8 @@ def check_alarm(bot):
     if check_alarm.min != min:
         logger.info("check_alarm.min %d, min %d" % (check_alarm.min, min) )
         logger.debug("alarm_dict %s" % (alarm_dict,) )
+        if min == 0:
+            send_ping(bot)
         check_alarm.min = min
         is_success = send_alarm(bot)
         if not is_success:
@@ -118,22 +144,23 @@ def check_alarm(bot):
 
 def save_alarm():
     with open('alarm.pic','wb') as f:
-        pickle.dump([get_update.last_up, alarm_dict], f)
-        logger.info("save %d %s" % (get_update.last_up, alarm_dict) )
+        pickle.dump([get_update.last_up, alarm_dict, ping_dict], f)
+        logger.info("save %d %s %s" % (get_update.last_up, alarm_dict, ping_dict) )
 
 def load_alarm():
     get_update.last_up = 0
     global alarm_dict
+    global ping_dict
     if os.path.exists("alarm.pic"):
         f = open("alarm.pic", "rb")
-        get_update.last_up, alarm_dict = pickle.load(f)
-        logger.info("load %d %s" % (get_update.last_up, alarm_dict) )
+        get_update.last_up, alarm_dict, ping_dict = pickle.load(f)
+        logger.info("load %d %s %s" % (get_update.last_up, alarm_dict, ping_dict) )
         f.close()
-    return get_update.last_up, alarm_dict
+    return get_update.last_up, alarm_dict, ping_dict
 
 if __name__ == "__main__":
     bot = telegram.Bot(token = my_token)    # bot을 선언합니다.
-    get_update.last_up, alarm_dict = load_alarm()
+    get_update.last_up, alarm_dict, ping_dict = load_alarm()
     check_alarm.min = 0
     while True:
         check_alarm(bot)
