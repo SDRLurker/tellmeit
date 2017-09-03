@@ -94,7 +94,7 @@ def get_update(bot):
             # https://github.com/python-telegram-bot/python-telegram-bot/issues/26
             get_update.last_up = u.update_id + 1
     except Exception as e:
-        logger.error(e)
+        logger.error('get_update : ' + str(e))
 
 # https://stackoverflow.com/questions/11329917/restart-python-script-from-within-itself
 def restart_program():
@@ -103,7 +103,7 @@ def restart_program():
         for handler in p.get_open_files() + p.connections():
             os.close(handler.fd)
     except Exception as e:
-        logger.error('restart_program : ' + e)
+        logger.error('restart_program : ' + str(e))
     python = sys.executable
     os.execl(python, python, *sys.argv)
 
@@ -115,8 +115,8 @@ def send_alarm(bot):
     try:
         data = naver.get_crawl_data()
     except Exception as e:
-        logger.error('send_alarm' + e)
-        bot.send_message(admin_id, '네이버 크롤링 오류. 내용=%s' % e)
+        logger.error('send_alarm' + str(e))
+        bot.send_message(admin_id, '네이버 크롤링 오류. 내용=%s' % str(e))
         return False
     for chat_id in alarm_dict:
         keywords = alarm_dict[chat_id].split()
