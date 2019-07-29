@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 #-*- coding: utf-8 -*-
 import telegram # 텔레그램 모듈을 가져옵니다.
 import naver
