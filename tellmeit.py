@@ -123,7 +123,11 @@ def send_alarm(bot):
         for keyword in keywords:
             logger.debug("send_alarm %s %s %s" % (chat_id, keyword, naver.search_word(data, keyword)) )
             if naver.search_word(data, keyword) >= 0:
-                bot.send_message( chat_id=chat_id, text= ALARM_TMPL % (keyword, quote(keyword)) )
+                # send_message permission 오류로 except 처리 추가
+                try:
+                    bot.send_message( chat_id=chat_id, text= ALARM_TMPL % (keyword, quote(keyword)) )
+                except Exception as e:
+                    logger.error('bot.send_message(%s)' % chat_id + str(e))
     return True
 
 def check_alarm(bot):
