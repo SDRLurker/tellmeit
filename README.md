@@ -39,11 +39,11 @@
 ## 의존성 관리
 
 ```shell
-pip install -r requirements.txt
+tellmeit$ pip install -r requirements.txt
 ```
 
 ## 프로그램 실행
 
 ```shell
-./tellmeit.py
+tellmeit$ ./tellmeit.sh &
 ```
