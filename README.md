@@ -8,13 +8,13 @@
 
 해당 키워드에 대해 알람메세지를 보냅니다.
 
-홈페이지 : http://p2pcbot.ga/tellmeit, http://psbbbot.herokuapp.com/tellmeit/
+홈페이지 : http://p2pcbot.cf/tellmeit, http://psbbbot.herokuapp.com/tellmeit/
 
 텔레그램 아이디 : [tellmeit_bot](https://telegram.me/tellmeit_bot)
 
 ## 사용법
 
-* /알람 (키워드1) (키워드2) ...
+* /알람 키워드1 키워드2 ...
 
 키워드1, 키워드2 (OR 조건) 등을 알람 메세지를 받을 수 있도록 등록합니다.
 
