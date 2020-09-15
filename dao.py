@@ -62,20 +62,21 @@ def __check_variable(v, name):
         logger.error('%s is not found.' % name)
         sys.exit(1)
 
-firebase_key = os.environ.get('FIREBASE_KEY','')
-#print(firebase_key)
-firebase_url = os.environ.get('FIREBASE_URL','')
-#print(firebase_key)
-bot_id = os.environ.get('TELEGRAM_BOT','')
-#print(bot_id)
 
 if __name__ == "__main__":
-    p = dao_pickle()
-    get_update.last_up, alarm_dict, ping_dict = p.load_alarm()
+    firebase_key = os.environ.get('FIREBASE_KEY','')
+    #print(firebase_key)
+    firebase_url = os.environ.get('FIREBASE_URL','')
+    #print(firebase_key)
+    bot_id = os.environ.get('TELEGRAM_BOT','')
+    #print(bot_id)
 
     __check_variable(firebase_key, 'firebase_key')
     __check_variable(firebase_url, 'firebase_url')
     __check_variable(bot_id, 'bot_id')
+
+    p = dao_pickle()
+    get_update.last_up, alarm_dict, ping_dict = p.load_alarm()
 
     f = dao_firebase(firebase_key, firebase_url, bot_id)
     f.save_alarm()
