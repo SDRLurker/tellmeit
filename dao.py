@@ -4,24 +4,22 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
-from tellmeit import logger, get_update, alarm_dict, ping_dict
 import sys
 import os
+from logger import get_logger
+
+logger = get_logger(__name__)
 
 class dao_pickle:
-    def save_alarm(self, last_up):
-        global alarm_dict
-        global ping_dict
-
+    def save_alarm(self, last_up, alarm_dict, ping_dict):
         with open('alarm.pic','wb') as f:
             pickle.dump([last_up, alarm_dict, ping_dict], f)
             logger.info("save %d %s %s" % (last_up, alarm_dict, ping_dict) )
 
     def load_alarm(self):
-        global alarm_dict
-        global ping_dict
-
         last_up = 0
+        alarm_dict = {} 
+        ping_dict = {} 
         if os.path.exists("alarm.pic"):
             f = open("alarm.pic", "rb")
             last_up, alarm_dict, ping_dict = pickle.load(f)
@@ -40,21 +38,16 @@ class dao_firebase:
         os.remove('t.json') 
         self.bot_id = bot_id
         
-    def save_alarm(self, last_up):
-        global alarm_dict
-        global ping_dict
+    def save_alarm(self, last_up, alarm_dict, ping_dict):
         ref = db.reference(self.bot_id)
-        print("save",{'last_up':last_up, 'alarm':alarm_dict, 'ping':ping_dict})
         ref.update({'last_up':last_up, 'alarm':alarm_dict, 'ping':ping_dict})
         logger.info("save %d %s %s" % (last_up, alarm_dict, ping_dict) )
 
     def load_alarm(self):
-        global alarm_dict
-        global ping_dict
-
         last_up = 0
+        alarm_dict = {} 
+        ping_dict = {} 
         ref = db.reference(self.bot_id)
-        print(ref.get())
         if ref.get():
             last_up = ref.get().get('last_up',0)
             alarm_dict = ref.get().get('alarm',{})
@@ -84,4 +77,4 @@ if __name__ == "__main__":
     last_up, alarm_dict, ping_dict = p.load_alarm()
 
     f = dao_firebase(firebase_key, firebase_url, bot_id)
-    f.save_alarm(last_up)
+    f.save_alarm(last_up, alarm_dict, ping_dict)
