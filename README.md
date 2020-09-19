@@ -47,3 +47,10 @@ tellmeit$ pip install -r requirements.txt
 ```shell
 tellmeit$ ./tellmeit.sh &
 ```
+
+## 공지사항 전송하기 예시
+
+```shell
+tellmeit$ vi notice.txt # 공지할 내용 작성.
+tellmeit$ ./notice.py notice.txt
+```
