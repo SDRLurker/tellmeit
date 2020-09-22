@@ -8,9 +8,13 @@
 
 해당 키워드에 대해 알람메세지를 보냅니다.
 
-홈페이지 : http://p2pcbot.cf/tellmeit, http://psbbbot.herokuapp.com/tellmeit/
+### 홈페이지 
 
-텔레그램 아이디 : [tellmeit_bot](https://telegram.me/tellmeit_bot)
+* https://sdrlurker.github.io/tellmeit/
+* https://psbbbot.herokuapp.com/tellmeit/
+
+### 텔레그램 아이디
+* [tellmeit_bot](https://telegram.me/tellmeit_bot)
 
 ## 사용법
 
