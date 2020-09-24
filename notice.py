@@ -29,7 +29,10 @@ logger.addHandler(fileHandler)
 
 def send_notice(bot, message):
     for chat_id in alarm_dict:
-        bot.send_message( chat_id=chat_id, text=message )
+        try:
+            bot.send_message( chat_id=chat_id, text=message )
+        except Exception as e:
+            logger.error('send_notice %s error : ' % chat_id + str(e))
 
 def check_variable(v, name):
     if not v:
