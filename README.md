@@ -8,6 +8,10 @@
 
 해당 키워드에 대해 알람메세지를 보냅니다.
 
+### Youtube 
+
+* [https://youtu.be/Qb7oxmlinBE](https://youtu.be/Qb7oxmlinBE)
+
 ### 홈페이지 
 
 * https://sdrlurker.github.io/tellmeit/
