@@ -19,3 +19,8 @@ def get_crawl_data():
 
 def search_word(data, word):
     return data.find(word)
+
+def get_search_tmpl():
+    ALARM_TMPL = '''%s 검색어 확인
+https://search.naver.com/search.naver?where=nexearch&query=%s&ie=utf8&'''
+    return ALARM_TMPL

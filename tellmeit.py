@@ -21,8 +21,6 @@ HELP_MSG = """* /알람 (키워드1) (키워드2) ...
 키워드1, 키워드2 (OR 조건) 등을 알람 메세지를 받을 수 있도록 등록합니다.
 * /알람
 등록된 키워드를 삭제합니다."""
-ALARM_TMPL = '''%s 검색어 확인
-https://search.naver.com/search.naver?where=nexearch&query=%s&ie=utf8&'''
 PING_REG = "핑이 등록되었습니다."
 PING_DEL = "핑이 해제되었습니다."
 PING_MSG = "정각입니다. tellmeit_bot이 살아있음을 알립니다."
@@ -113,13 +111,15 @@ def send_alarm(bot):
     for chat_id in alarm_dict:
         keywords = alarm_dict[chat_id].split()
         for keyword in keywords:
-            logger.debug("send_alarm %s %s %s" % (chat_id, keyword, naver.search_word(data, keyword)) )
-            if naver.search_word(data, keyword) >= 0:
-                # send_message permission 오류로 except 처리 추가
-                try:
-                    bot.send_message( chat_id=chat_id, text= ALARM_TMPL % (keyword, quote(keyword)) )
-                except Exception as e:
-                    logger.error('bot.send_message(%s)' % chat_id + str(e))
+            for module in (naver,):
+                logger.debug("send_alarm %s %s %s" % (chat_id, keyword, module.search_word(data, keyword)) )
+                if module.search_word(data, keyword) >= 0:
+                    # send_message permission 오류로 except 처리 추가
+                    try:
+                        alarm_tmpl = module.get_search_tmpl()
+                        bot.send_message( chat_id=chat_id, text=alarm_tmpl % (keyword, quote(keyword)) )
+                    except Exception as e:
+                        logger.error('bot.send_message(%s)' % chat_id + str(e))
     return True
 
 def check_alarm(bot, dao):
