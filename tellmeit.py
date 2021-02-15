@@ -101,17 +101,17 @@ def send_ping(bot):
         bot.send_message( chat_id=chat_id, text=PING_MSG )
 
 def send_alarm(bot):
-    try:
-        data = naver.get_crawl_data()
-    except Exception as e:
-        logger.error('send_alarm' + str(e))
-        if admin_id:
-            bot.send_message(admin_id, '네이버 크롤링 오류. 내용=%s' % str(e))
-        return False
-    for chat_id in alarm_dict:
-        keywords = alarm_dict[chat_id].split()
-        for keyword in keywords:
-            for module in (naver,):
+    for module in (naver,):
+        try:
+            data = module.get_crawl_data()
+        except Exception as e:
+            logger.error('send_alarm' + str(e))
+            if admin_id:
+                bot.send_message(admin_id, '%s 크롤링 오류. 내용=%s' % (module.__name__,str(e)))
+            continue
+        for chat_id in alarm_dict:
+            keywords = alarm_dict[chat_id].split()
+            for keyword in keywords:
                 logger.debug("send_alarm %s %s %s" % (chat_id, keyword, module.search_word(data, keyword)) )
                 if module.search_word(data, keyword) >= 0:
                     # send_message permission 오류로 except 처리 추가
