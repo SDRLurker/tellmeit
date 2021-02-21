@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 #-*- coding: utf-8 -*-
-import telegram # 텔레그램 모듈을 가져옵니다.
-import naver
 
 import time
 import datetime
@@ -10,9 +8,13 @@ import os
 from urllib.parse import quote
 import sys
 import psutil
-
-import dao
 from logger import get_logger
+
+import telegram # 텔레그램 모듈을 가져옵니다.
+import naver
+import zum
+import nate
+import dao
 
 alarm_dict = {}
 ping_dict = {}
@@ -101,7 +103,7 @@ def send_ping(bot):
         bot.send_message( chat_id=chat_id, text=PING_MSG )
 
 def send_alarm(bot):
-    for module in (naver,):
+    for module in (zum, nate, naver):
         try:
             data = module.get_crawl_data()
         except Exception as e:
