@@ -14,7 +14,6 @@ import telegram # 텔레그램 모듈을 가져옵니다.
 
 import dao
 import nate
-import naver
 import zum
 
 alarm_dict = {}
@@ -104,7 +103,7 @@ def send_ping(bot):
         bot.send_message( chat_id=chat_id, text=PING_MSG )
 
 def send_alarm(bot):
-    for module in (zum, nate, naver):
+    for module in (zum, nate):
         try:
             data = module.get_crawl_data()
         except Exception as e:
