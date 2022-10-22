@@ -3,4 +3,4 @@ requests
 beautifulsoup4
 python-telegram-bot
 psutil
-firebase-admin
+firebase-admin==5.2.0
