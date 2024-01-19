@@ -1,6 +1,6 @@
 pyparsing==2.4.7
 requests
 beautifulsoup4
-python-telegram-bot
+python-telegram-bot==13.5
 psutil
 firebase-admin==5.2.0
